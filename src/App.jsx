@@ -136,6 +136,14 @@ class App extends Component {
         alt: evt.target.alt,
       },
     }, () => {console.log(this.state);})
+    if(evt.target.nodeName !== "IMG"){
+      this.setState({
+        dataLargeImg: {
+          large:"",
+          alt: "",
+        },
+      })
+    }
   }
 
   render() {
