@@ -1,12 +1,11 @@
-const ImageGalleryItems = ({items}) => {
+const ImageGalleryItems = ({items, getData}) => {
   return (
     <>
-    <h2>Hello</h2>
       {items &&
         items.map(item => {
           return (
             <li key={item.id} className="gallery-item">
-              <img src={item.webformatURL} alt="" />
+              <img src={item.webformatURL} alt={item.description} data-large={item.largeImageURL} onClick={getData}/>
             </li>
           );
         })}
