@@ -41,7 +41,6 @@ class App extends Component {
       const params = new URLSearchParams({
         key: API_KEY,
         q: searchText,
-        lang: 'pl',
         lang: 'en',
         image_type: 'photo',
         orientation: 'horizontal',
