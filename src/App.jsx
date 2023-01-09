@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import axios from 'axios';
+
 import Searchbar from 'components/Searchbar/Searchbar';
 import ImageGallery from 'components/ImageGallery/ImageGallery';
 import ImageGalleryItems from 'components/ImageGalleryItem/ImageGalleryItem';
@@ -11,35 +12,30 @@ const FETCH_API_URL = 'https://pixabay.com/api/';
 const API_KEY = '26135070-3e729b9e8c0999352fd85e768';
 const IMAGES_PER_PAGE = 12;
 let nextPage = 1;
-let sumOfLoadedImages = IMAGES_PER_PAGE;
 
 class App extends Component {
   state = {
     inputValue: '',
     items: [],
-    totalImages: 0,
     currentPage: 1,
     loader: false,
     loaderSecond: false,
-    dataLargeImg: {}
+    dataLargeImg: {},
   };
 
   addCurrentValue = event => {
     event.preventDefault();
-    console.log(event);
     const name = event.target[1].name;
     const value = event.target[1].value;
-    this.setState(
-      {
-        [name]: value,
-      }
-    );
+    this.setState({
+      [name]: value,
+    });
   };
 
-  fetchApi = async (page) => {
+  fetchApi = async page => {
     try {
       this.setState({
-        loader: true
+        loader: true,
       });
       const searchText = this.state.inputValue.split(' ').join('+');
       const params = new URLSearchParams({
@@ -54,11 +50,9 @@ class App extends Component {
         per_page: IMAGES_PER_PAGE,
       });
       const responce = await axios(FETCH_API_URL + '?' + params);
-      console.log(responce.data.hits);
-      console.log(responce);
       this.setState({
         loader: false,
-        loaderSecond: false
+        loaderSecond: false,
       });
       const photos = responce.data.hits.map(photo => {
         return {
@@ -68,96 +62,84 @@ class App extends Component {
           description: photo.tags,
         };
       });
-
-      console.log(photos);
-      this.setState(prevState => 
-        {
-          return {
-            items: [...prevState.items, ...photos],
-          totalImages: responce.data.totalHits,
-          }
-          
-        },
-        () => {
-          console.log(this.state);
-        }
-      );
+      this.setState(prevState => {
+        return {
+          items: [...prevState.items, ...photos],
+        };
+      });
     } catch (error) {
       console.log(error);
     }
   };
 
   loadMoreImages = () => {
-    nextPage+=1;
-    sumOfLoadedImages+=IMAGES_PER_PAGE;
+    nextPage += 1;
     this.setState({
       currentPage: nextPage,
       loaderSecond: true,
-    })
-    console.log(nextPage);
-    console.log(sumOfLoadedImages);
+    });
   };
 
   resetItems = () => {
-    nextPage=1;
-    sumOfLoadedImages= IMAGES_PER_PAGE;
+    nextPage = 1;
     this.setState({
-      items:[],
-      totalImages: 0,
-      currentPage: nextPage
-    })
-    console.log(nextPage);
-    console.log(sumOfLoadedImages);
+      items: [],
+      currentPage: nextPage,
+    });
   };
 
-  componentDidMount() {
-  }
+  componentDidMount() {}
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.inputValue !== this.state.inputValue) {
-      console.log('componentDidUpdate 1');
       this.resetItems();
       this.fetchApi();
-    };
-    if(prevState.currentPage < this.state.currentPage && prevState.inputValue === this.state.inputValue){
-      // this.loadMoreImages();
-      console.log('componentDidUpdate 2');
+    }
+    if (
+      prevState.currentPage < this.state.currentPage &&
+      prevState.inputValue === this.state.inputValue
+    ) {
       this.fetchApi(nextPage);
     }
-  };
+  }
 
-  setDataToLargeImg = (evt) => {
-    console.log("setDataToLargeImg");
-    console.log(evt);
-    console.log(evt.target.dataset.large);
+  setDataToLargeImg = evt => {
     this.setState({
       dataLargeImg: {
-        large:evt.target.dataset.large,
+        large: evt.target.dataset.large,
         alt: evt.target.alt,
       },
-    }, () => {console.log(this.state);})
-    if(evt.target.nodeName !== "IMG"){
+    });
+  };
+
+  closeModal = event => {
+    if (event.target.nodeName !== 'IMG' || event.keyCode === 'Escape') {
       this.setState({
         dataLargeImg: {
-          large:"",
-          alt: "",
+          large: '',
+          alt: '',
         },
-      })
+      });
     }
-  }
+  };
 
   render() {
     return (
       <>
-        <h1>Hello</h1>
         <Searchbar onSubmit={this.addCurrentValue} />
-        <Loader visually={this.state.loader}/>
-        <ImageGallery>
-          <ImageGalleryItems items={this.state.items} getData={this.setDataToLargeImg}/>
+        <Loader visually={this.state.loader} />
+        <ImageGallery closeModal={this.closeModal}>
+          <ImageGalleryItems
+            items={this.state.items}
+            getData={this.setDataToLargeImg}
+          />
         </ImageGallery>
-        <Modal imgObject={this.state.dataLargeImg}/>
-        <Loader visuallySecond={this.state.loaderSecond}/>
-        <Button loadMore={this.loadMoreImages} items={this.state.items}/>
+        <Modal
+          imgObject={this.state.dataLargeImg}
+          closeModal={this.closeModal}
+        />
+        <Loader visuallySecond={this.state.loaderSecond} />
+        <Button loadMore={this.loadMoreImages} items={this.state.items} />
       </>
     );
   }

@@ -1,13 +1,16 @@
+import searchbarStyles from './Searchbar.module.css';
+import PropTypes from 'prop-types';
+
 const Searchbar = ({ onSubmit }) => {
   return (
-    <header className="searchbar">
-      <form className="form" onSubmit={onSubmit}>
-        <button type="submit" className="button">
+    <header className={searchbarStyles.searchbar}>
+      <form className={searchbarStyles.form} onSubmit={onSubmit}>
+        <button type="submit" className={searchbarStyles.button}>
           <span className="button-label">Search</span>
         </button>
         <input
           name="inputValue"
-          className="input"
+          className={searchbarStyles.input}
           type="text"
           autoComplete="off"
           autoFocus
@@ -16,6 +19,10 @@ const Searchbar = ({ onSubmit }) => {
       </form>
     </header>
   );
+};
+
+Searchbar.propTypes = {
+  onSubmit: PropTypes.func,
 };
 
 export default Searchbar;

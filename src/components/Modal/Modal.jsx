@@ -1,30 +1,23 @@
-const Modal = ({ imgObject }) => {
+import modalStyles from './Modal.module.css';
+import PropTypes from 'prop-types';
+
+const Modal = ({ imgObject, closeModal }) => {
   return (
-    <div className="overlay">
-      <div className="modal">
-        <img src={imgObject.large} alt={imgObject.alt} />
-      </div>
-    </div>
+    <>
+      {imgObject.large && (
+        <div className={modalStyles.overlay} onClick={closeModal}>
+          <div className={modalStyles.modal}>
+            <img src={imgObject.large} alt={imgObject.alt} />
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
+Modal.propTypes = {
+  imgObject: PropTypes.objectOf(PropTypes.string),
+  closeModal: PropTypes.func,
+};
+
 export default Modal;
-
-// import * as basicLightbox from 'basiclightbox';
-// basicLightbox = require('basiclightbox');
-
-// const Modal = ({ imgObject }) => {
-
-//   return (
-//     <div className="overlay">
-//       <div className="modal">
-//         {imgObject.large &&
-//           basicLightbox
-//             .create(`<img src=${imgObject.large} width="800" height="600">`)
-//             .show()}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Modal;
