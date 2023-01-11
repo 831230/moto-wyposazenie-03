@@ -1,10 +1,10 @@
 import buttonStyles from './Button.module.css';
 import PropTypes from 'prop-types';
 
-const Button = ({ loadMore, items }) => {
+const Button = ({ loadMore, items, totalHits, currentPage }) => {
   return (
     <>
-      {items.length > 0 ? (
+      {items.length > 0 && currentPage<=(totalHits/12) ? (
         <button className={buttonStyles.moreButton} onClick={loadMore}>
           Load more
         </button>
@@ -22,6 +22,8 @@ Button.propTypes = {
     })
   ),
   loadMore: PropTypes.func,
+  totalHits: PropTypes.number,
+  currentPage: PropTypes.number,
 };
 
 export default Button;

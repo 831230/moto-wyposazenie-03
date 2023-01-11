@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import axios from 'axios';
+import { fetchPictures } from 'components/fetchPictures/fetchPictures';
 
 import Searchbar from 'components/Searchbar/Searchbar';
 import ImageGallery from 'components/ImageGallery/ImageGallery';
@@ -8,15 +8,13 @@ import Button from 'components/Button/Button';
 import Loader from 'components/Loader/Loader';
 import Modal from 'components/Modal/Modal';
 
-const FETCH_API_URL = 'https://pixabay.com/api/';
-const API_KEY = '26135070-3e729b9e8c0999352fd85e768';
-const IMAGES_PER_PAGE = 12;
 let nextPage = 1;
 
 class App extends Component {
   state = {
     inputValue: '',
     items: [],
+    totalHits: 0,
     currentPage: 1,
     loader: false,
     loaderSecond: false,
@@ -33,26 +31,17 @@ class App extends Component {
   };
 
   fetchApi = async page => {
-    try {
-      this.setState({
-        loader: true,
-      });
-      const searchText = this.state.inputValue.split(' ').join('+');
-      const params = new URLSearchParams({
-        key: API_KEY,
-        q: searchText,
-        lang: 'en',
-        image_type: 'photo',
-        orientation: 'horizontal',
-        safesearch: true,
-        page: page,
-        per_page: IMAGES_PER_PAGE,
-      });
-      const responce = await axios(FETCH_API_URL + '?' + params);
+    this.setState({
+      loader: true,
+    });
+    const searchText = this.state.inputValue.split(' ').join('+');
+
+    fetchPictures(searchText, page).then(responce => {
       this.setState({
         loader: false,
         loaderSecond: false,
       });
+      const totalHits = responce.data.totalHits;
       const photos = responce.data.hits.map(photo => {
         return {
           id: photo.id,
@@ -64,11 +53,10 @@ class App extends Component {
       this.setState(prevState => {
         return {
           items: [...prevState.items, ...photos],
+          totalHits: totalHits,
         };
       });
-    } catch (error) {
-      console.log(error);
-    }
+    });
   };
 
   loadMoreImages = () => {
@@ -86,8 +74,6 @@ class App extends Component {
       currentPage: nextPage,
     });
   };
-
-  componentDidMount() {}
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.inputValue !== this.state.inputValue) {
@@ -138,7 +124,12 @@ class App extends Component {
           closeModal={this.closeModal}
         />
         <Loader visuallySecond={this.state.loaderSecond} />
-        <Button loadMore={this.loadMoreImages} items={this.state.items} />
+        <Button
+          loadMore={this.loadMoreImages}
+          items={this.state.items}
+          totalHits={this.state.totalHits}
+          currentPage={this.state.currentPage}
+        />
       </>
     );
   }
