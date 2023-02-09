@@ -36,13 +36,13 @@ class App extends Component {
     });
     const searchText = this.state.inputValue.split(' ').join('+');
 
-    fetchPictures(searchText, page).then(responce => {
+    fetchPictures(searchText, page).then(response => {
       this.setState({
         loader: false,
         loaderSecond: false,
       });
-      const totalHits = responce.data.totalHits;
-      const photos = responce.data.hits.map(photo => {
+      const totalHits = response.data.totalHits;
+      const photos = response.data.hits.map(photo => {
         return {
           id: photo.id,
           largeImageURL: photo.largeImageURL,

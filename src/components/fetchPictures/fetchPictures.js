@@ -16,9 +16,9 @@ export async function fetchPictures(query, page) {
     per_page: IMAGES_PER_PAGE,
   });
   try {
-    const responce = await axios(FETCH_API_URL + '?' + params);
-    console.log(responce);
-    return responce;
+    const response = await axios(FETCH_API_URL + '?' + params);
+    console.log(response);
+    return response;
   } catch (error) {
     console.log(error);
   }
