@@ -8,10 +8,9 @@ import Button from 'components/Button/Button';
 import Loader from 'components/Loader/Loader';
 import Modal from 'components/Modal/Modal';
 
-let nextPage = 1;
-
 class App extends Component {
   state = {
+    nextPage: 1,
     inputValue: '',
     items: [],
     totalHits: 0,
@@ -60,18 +59,17 @@ class App extends Component {
   };
 
   loadMoreImages = () => {
-    nextPage += 1;
-    this.setState({
-      currentPage: nextPage,
+    this.setState(prevState => ({
+      nextPage: prevState.nextPage + 1,
+      currentPage: this.state.nextPage,
       loaderSecond: true,
-    });
+    }));
   };
 
   resetItems = () => {
-    nextPage = 1;
     this.setState({
       items: [],
-      currentPage: nextPage,
+      currentPage: 1,
     });
   };
 
@@ -84,7 +82,7 @@ class App extends Component {
       prevState.currentPage < this.state.currentPage &&
       prevState.inputValue === this.state.inputValue
     ) {
-      this.fetchApi(nextPage);
+      this.fetchApi(this.state.nextPage);
     }
   }
 
